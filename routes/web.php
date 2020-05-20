@@ -20,6 +20,7 @@ Route::get('/', 'PostController@posts');
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function() {
     Route::get('/', 'AdminController@index')->name('admin');
     Route::resource('post', 'PostController');
+    Route::post('/image-upload', 'PostController@imageUpload');
 });
 
 Route::get('/{slug?}', 'PostController@posts');

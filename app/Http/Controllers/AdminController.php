@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Post;
+use App\Category;
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class
+AdminController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -23,6 +26,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $posts =  Post::all();
+        return view('admin.index', ["posts" => $posts]);
     }
 }

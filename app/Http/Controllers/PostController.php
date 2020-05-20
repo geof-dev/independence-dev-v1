@@ -6,19 +6,18 @@ use App\Post;
 use App\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
 
     public function posts($categ_slug = null)
     {
-        if(is_null($categ_slug)) $posts = Post::published()->get();
-        else{
+        if(is_null($categ_slug))
+            $posts = Post::published()->get();
+        else
             $posts =  Category::where('slug', $categ_slug)->first()->posts()->published()->get();
-        }
-
-        $view = view('posts', ["posts" => $posts]);
-        return $view;
+        return view('posts', ["posts" => $posts]);
     }
 
     public function post($slug)
@@ -66,7 +65,7 @@ class PostController extends Controller
             $image = $request->file('thumbnail');
             $filename = $data['slug'] . '.' . $image->getClientOriginalExtension();
             $data['thumbnail'] = $filename;
-            $location = storage_path('app/public/img/thumbnail/');
+            $location = storage_path('app/public/img/thumbnails/');
             $image->move($location, $filename);
         } else {
             $data['thumbnail'] = $post->getAttribute('thumbnail');
@@ -80,5 +79,17 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
         $post->delete();
         return redirect('admin');
+    }
+
+    public function imageUpload(Request $request)
+    {
+        $validatedData = $request->validate([
+            'file' => 'required|file',
+        ]);
+        $id = $request->id;
+
+        $path = $request->file('file')->store('img/posts/'.$id, 'public');
+        $url = ['location' => Storage::url($path)];
+        return $url;
     }
 }
